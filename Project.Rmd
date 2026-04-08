@@ -4,6 +4,8 @@ library(tidyverse)
 library(dplyr)
 library(ggplot2)
 ```
+
+
 #Carga de archivos
 ```{r}
 proyectoInovacion = read_csv('proyectos_innovacion.csv')
@@ -66,3 +68,52 @@ indicadoresAreaDf <- bind_rows(listaIndicadores)
 
 ```
 
+
+```{r}
+#nuevas variables utilizando mutate
+proyectoInovacion <- proyectoInovacion %>%
+  mutate(
+    productividad = publicaciones / investigadores,
+    intensidad_investigacion = investigadores / duracion_meses,
+    indice_resultados = (publicaciones + 2 * patentes) / presupuesto_usd
+  )
+
+# Presupuesto promedio por país y área tecnológica
+presupuesto_pais_area <- proyectoInovacion %>%
+  group_by(pais, area_tecnologica) %>%
+  summarize(presupuesto_promedio = mean(presupuesto_usd, na.rm = TRUE), .groups = 'drop')
+
+# Número de proyectos por año
+proyectos_por_anio <- proyectoInovacion %>%
+  group_by(anio_inicio) %>%
+  summarize(total_proyectos = n(), .groups = 'drop')
+
+# Productividad promedio por área tecnológica y nivel de impacto
+productividad_area_impacto <- proyectoInovacion %>%
+  group_by(area_tecnologica, impacto) %>%
+  summarize(productividad_promedio = mean(productividad, na.rm = TRUE), .groups = 'drop')
+
+# generar rankings utilizando arrange(desc(variable))
+
+# Top 10 proyectos con mayor eficiencia
+top_10_eficiencia <- proyectoInovacion %>%
+  arrange(desc(indice_resultados)) %>%
+  head(10)
+
+# Top 5 países con mayor productividad promedio
+top_5_paises_productividad <- proyectoInovacion %>%
+  group_by(pais) %>%
+  summarize(prod_promedio_pais = mean(productividad, na.rm = TRUE)) %>%
+  arrange(desc(prod_promedio_pais)) %>%
+  head(5)
+
+#visualizacion 10 proyectos con mayor eficiencia
+top_10_eficiencia
+
+#visualización 5 paises con mayor productividad promedio
+top_5_paises_productividad
+
+
+listaProyecto$dataframeOriginal <- proyectoInovacion
+
+```
