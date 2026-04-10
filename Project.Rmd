@@ -22,53 +22,67 @@ str(paisesPib)
 ```{r}
 
 # Lista de países
-listaPaises <- unique(proyectoInovacion$pais)
-
+listaPaises <- proyectoInovacion %>%
+  group_by(pais) %>%
+  summarize()
 # Lista de áreas tecnológicas
-listaAreas <- unique(proyectoInovacion$area_tecnologica)
+listaAreas <- proyectoInovacion %>%
+  group_by(area_tecnologica) %>%
+  summarize()
 
-estadisticasIniciales <- proyectoInovacion %>%
-  summarise(
-    proyectosTotales = sum(presupuesto_usd > 0),
-    presupuestoPromedio = mean(presupuesto_usd),
-    promedioPublicaciones = mean(publicaciones),
-    promedioInvestigadores = mean(investigadores)
+proyectosTotales = sum(proyectoInovacion$presupuesto_usd > 0)
+presupuestoPromedio = mean(proyectoInovacion$presupuesto_usd)
+promedioPublicaciones = mean(proyectoInovacion$publicaciones)
+promedioInvestigadores = mean(proyectoInovacion$investigadores)
+
+estadisticasIniciales <- data_frame (
+    proyectosTotales,
+    presupuestoPromedio,
+    promedioPublicaciones,
+    promedioInvestigadores
   )
 
-proyectosPorArea <- split(proyectoInovacion, proyectoInovacion$area_tecnologica)
+
+# Subconjuntos de proyectos por área tecnológica
+proyectosPorArea <- lapply(listaAreas$area_tecnologica, function(area) {
+  proyectoInovacion %>%
+    filter(area_tecnologica == area)
+  }
+)
 
 listaProyecto <- list( dataframeOriginal = proyectoInovacion, paises = listaPaises,
   areasTecnologicas = listaAreas, estadisticas = estadisticasIniciales,
   proyectosPorArea = proyectosPorArea
 )
 
+listaProyecto
+
 #uso de lapply
-promerdiosAreaTecno <- lapply(proyectosPorArea, function(df) {
+promediosAreaTecno <- lapply(proyectosPorArea, function(df) {
   list(
-    proyectos = nrow(df),
+    area = df$area_tecnologica[1],
     presupuestoPromedio = mean(df$presupuesto_usd),
     promedioPublicaciones = mean(df$publicaciones),
     promedioInvestigadores = mean(df$investigadores)
   )
 })
 
-listaIndicadores <- lapply(names(promerdiosAreaTecno), function(area) {
-  data.frame(
-    areaTecnologica = area,
-    numeroProyectos = promerdiosAreaTecno[[area]]$proyectos,
-    presupuestoPromedio = promerdiosAreaTecno[[area]]$presupuestoPromedio,
-    productividadPromedio = promerdiosAreaTecno[[area]]$promedioPublicaciones /
-                              promerdiosAreaTecno[[area]]$promedioInvestigadores
+listaIndicadores <- lapply(proyectosPorArea, function(df) {
+  list(
+    area = df$area_tecnologica[1],
+    proyectos = nrow(df),
+    presupuestoPromedio = mean(df$presupuesto_usd),
+    promedioPublicaciones = mean(df$publicaciones),
+    productividadPromedio = mean(df$publicaciones / df$investigadores)
   )
 })
 
-# Unir todo en un solo dataframe
-indicadoresAreaDf <- bind_rows(listaIndicadores)
-
+promediosAreaTecno
+listaIndicadores
 
 ```
 
-
+#Parte III
 ```{r}
 #nuevas variables utilizando mutate
 proyectoInovacion <- proyectoInovacion %>%
@@ -86,6 +100,8 @@ presupuesto_pais_area <- proyectoInovacion %>%
 presupuesto_pais_area 
 
 # Número de proyectos por año
+# evaluamos presupuesto mayor a 0, en el csv actualmente todos tienen presupuesto 
+#pero pusimos esto como una validacion por si hubieran valores 0
 proyectos_por_anio <- proyectoInovacion %>%
   group_by(anio_inicio) %>%
   summarize(proyectos_totales= sum(presupuesto_usd > 0))
