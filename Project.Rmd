@@ -217,4 +217,41 @@ proyectoInovacion %>%
 
 
 ```
+#Parte VI - while
+```{r}
+#Calcular métricas para el umbral
+media_eficiencia <- mean(proyectoInovacion$indice_resultados)
+desv_eficiencia <- sd(proyectoInovacion$indice_resultados)
+umbral_sobresaliente <- media_eficiencia + (2 * desv_eficiencia)
+
+#Inicializar variables para el ciclo WHILE
+proyectos_sobresalientes <- c() # Vector para almacenar IDs
+i <- 1                          # Contador
+n <- nrow(proyectoInovacion)    # Total de registros
+
+#Ciclo WHILE - Búsqueda iterativa
+while (i <= n) {
+  
+  # Extraer la eficiencia del proyecto actual
+  eficiencia_actual <- proyectoInovacion$indice_resultados[i]
+  
+  # Validar si supera el umbral
+  if (!is.na(eficiencia_actual) && eficiencia_actual > umbral_sobresaliente) {
+    # Almacenar el identificador 
+    proyectos_sobresalientes <- c(proyectos_sobresalientes, proyectoInovacion$id_proyecto[i])
+  }
+  
+  # Incrementar contador
+  i <- i + 1
+}
+
+#Identificador de los proyectos sobresalientes
+print(proyectos_sobresalientes)
+
+# Detalle de estos proyectos
+detalle_sobresalientes <- proyectoInovacion %>% 
+  filter(id_proyecto %in% proyectos_sobresalientes)
+
+head(detalle_sobresalientes)
+```
 
