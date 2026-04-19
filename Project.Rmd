@@ -353,10 +353,10 @@ generar_resumen_estadistico <- function(df, columna) {
   
   resumen <- list(
     variable = columna,
-    media = mean(datos, na.rm = TRUE),
-    mediana = median(datos, na.rm = TRUE),
-    desviacion_estandar = sd(datos, na.rm = TRUE),
-    percentiles = quantile(datos, probs = c(0.25, 0.5, 0.75, 0.9), na.rm = TRUE)
+    media = mean(datos),
+    mediana = median(datos),
+    desviacion_estandar = sd(datos),
+    percentiles = quantile(datos, probs = c(0.25, 0.5, 0.75, 0.9))
   )
   return(resumen)
 }
