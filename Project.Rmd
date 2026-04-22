@@ -3,6 +3,7 @@
 library(tidyverse)
 library(dplyr)
 library(ggplot2)
+library(plotly)
 ```
 
 
@@ -380,38 +381,17 @@ print(df_resumen_de_variable)
 
 #Parte VIII
 ```{r}
+#Grafica de barras para presupuesto de proyectos
+ggplot(proyectoInovacion, aes(x = presupuesto_usd)) + geom_histogram( bins = 25, color = "white")
 
-ggplot(proyectoInovacion, aes(x = presupuesto_usd)) +
-  geom_histogram(
-    binwidth = 100000,
-    fill = "steelblue",
-    color = "white"
-  ) +
-  labs(
-    title = "Distribución del presupuesto de proyectos",
-    x = "Presupuesto (USD)",
-    y = "Frecuencia"
-  ) +
-  theme_minimal()
+#Grafica de dispercion que muestra la relacion entre presupuesto y publicaciones por pais
+grafica = ggplot(proyectoInovacion, aes(x = presupuesto_usd, y = publicaciones, color=pais,
+size=publicaciones)) + geom_point() + scale_x_log10() + scale_y_log10()
 
-ggplot(proyectoInovacion, aes(x = presupuesto_usd, y = publicaciones)) +
-  geom_point(alpha = 0.6, color = "darkgreen") +
-  labs(
-    title = "Relación entre presupuesto y publicaciones",
-    x = "Presupuesto (USD)",
-    y = "Número de publicaciones"
-  ) +
-  theme_minimal()
+ggplotly(grafica)
 
-ggplot(proyectoInovacion, aes(x = area_tecnologica, y = presupuesto_usd)) +
-  geom_boxplot(fill = "orange", alpha = 0.7) +
-  labs(
-    title = "Distribución del presupuesto por área tecnológica",
-    x = "Área tecnológica",
-    y = "Presupuesto (USD)"
-  ) +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+#Comparacion de prespuesto por area de tecnologia.
+ggplot(proyectoInovacion, aes(x = area_tecnologica, y = presupuesto_usd)) + geom_boxplot() + ggtitle("Distribución del presupuesto por área tecnológica") 
 
 
 ```
