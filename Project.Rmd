@@ -30,6 +30,7 @@ listaAreas <- proyectoInovacion %>%
   group_by(area_tecnologica) %>%
   summarize()
 
+#se raeliza el calculo para las estadisticas iniciales
 proyectosTotales = sum(proyectoInovacion$presupuesto_usd > 0)
 presupuestoPromedio = mean(proyectoInovacion$presupuesto_usd)
 promedioPublicaciones = mean(proyectoInovacion$publicaciones)
@@ -141,7 +142,7 @@ listaProyecto$dataframeOriginal <- proyectoInovacion
 ```
 #Parte IV
 ```{r}
-
+#se realiza el calculo de los indicadores por pais
 indicadoresPorPais <- proyectoInovacion %>%
   group_by(pais) %>%
   summarize(
@@ -156,7 +157,7 @@ datosIntegrados <- indicadoresPorPais %>%
   inner_join(paisesPib, by = "pais")
 datosIntegrados
 
-#
+#indicadores proyecto por millon pib y presupuesto relativo
 datosIntegrados <- datosIntegrados %>%
   mutate(
     proyectos_por_millon_pib = numeroProyectos / pib_millones,
