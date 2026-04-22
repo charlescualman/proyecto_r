@@ -1,7 +1,7 @@
 ---
 title: "Proyecto"
 output: html_notebook
-Nombre_Estudiante: "Marlon Estuardo Rodríguez Vásquez"
+Nombre_Estudiantes: "Marlon Estuardo Rodríguez Vásquez, Carlos Augusto Monterroso Lima"
 ---
 
 
@@ -405,7 +405,7 @@ ggplot(proyectoInovacion, aes(x = area_tecnologica, y = presupuesto_usd)) + geom
 ```{r}
 
 #¿Qué áreas tecnológicas reciben mayor financiamiento?
-
+#Con base de la grafica que relaciona preupuesto por area de tecnologia (boxplot) podemos observar que el area de agrotecnologia es quien tiene una inversion mayor respecto a los demás, seguido por Ciberseguridad y Biotecnologia. Podemos observar que tiene valores dispersos de presupuesto en funcion del país en donde son ejecutados, a pesar que todos estan expresados en una misma moneda (USD) para los diferentes paises
 
 mayor_financiamiento<-proyectoInovacion %>%
   group_by(area_tecnologica) %>%
@@ -414,58 +414,62 @@ mayor_financiamiento<-proyectoInovacion %>%
 
 mayor_financiamiento
 
-#areas tecnologicas ordenas de mayor a menor
-#area_tecnologica         financiamiento
-#Agrotecnologia             68127471			
-#Ciberseguridad             67395860			
-#Biotecnologia	            62584589			
-#Salud Digital	            60987706			
-#Inteligencia Artificial	  51087439			
-#Nanotecnologia	            46277278			
-#Energia Renovable	        38058983	
+#area_tecnologica    presupuesto resultados
+#Agrotecnologia	    68127471	1.216954e-05		
+#Ciberseguridad	    67395860	1.433972e-05		
+#Biotecnologia	      62584589	1.244508e-05		
+#Salud Digital	      60987706	9.845448e-06		
+#Inteligencia Artificial	51087439	1.287092e-05		
+#Nanotecnologia	    46277278	1.594650e-05		
+#Energia Renovable	  38058983	1.810391e-05	
 
 #¿Existe relación entre presupuesto y resultados?
 
-relacion_presupuesto_resultados<-proyectoInovacion %>%
-  group_by(area_tecnologica) %>%
-  summarize(presupuesto=mean(presupuesto_usd), resultados=mean(indice_resultados)) %>%
-  arrange(desc(resultados))
-  
-relacion_presupuesto_resultados
-
-#Viendo la tabla, si existe una relación lineal de presupuestos con resultados, pero es una relación inversa, entre mas presupuesto menor resultados y viceversa
-
-#area_tecnologica           presupuesto           resultados
-#Energia Renovable	        845755.2	            1.810391e-05		
-#Nanotecnologia	            964110.0	            1.594650e-05		
-#Ciberseguridad	            949237.5	            1.433972e-05		
-#Inteligencia Artificial	  880817.9	            1.287092e-05		
-#Biotecnologia	            1060755.7	            1.244508e-05		
-#Agrotecnologia	            1064491.7	            1.216954e-05		
-#Salud Digital	            1108867.4	            9.845448e-06	
-
-#¿Qué países presentan mayor productividad?
 paises_productividad<- proyectoInovacion %>%
   group_by(pais) %>%
-  summarize(productividad=mean(eficiencia_proyecto)) %>%
-  arrange(desc(productividad))
+  summarize(presupuesto=sum(presupuesto_usd), total_publicaciones = sum(publicaciones)) %>%
+  arrange(desc(presupuesto)) 
+
+paises_productividad
+
+#Viendo la tabla, no existe una relación lineal de presupuestos con resultados, porque se puede visualizar que presupuestos grandes tiene menos publicaciones que paises con menos presupuesto en algunos casos, ejemplo Chile tiene un presupuesto mayor a Guatemala, sin embargo, la produccion de Chile respecto a publicaciones es menor a la cantidad de publicaciones realizadas en Guatemala. Dicho en otra forma en algunos paises si se tiene una relacion del presupuesto y sus resultados, pero en algunos paises no se tiene la misma productividad inclusive con presupuestos elevados. Ejemplo Colombia es el #7 en presupuesto pero es el #3 en mayor cantidad de publicaciones.
+
+#pais      presupuesto total_publicaciones
+
+#Bolivia	  43906712	229		
+#Chile	    38547742	156		
+#Guatemala	36342676	198		
+#Panama	    36181954	213		
+#Costa Rica	35260397	176		
+#Ecuador	  33768193	154		
+#Colombia	  32469578	207		
+#Paraguay	  29745081	132		
+#Argentina	27925922	163		
+#Peru	      27685733	139	
+
+#¿Qué países presentan mayor productividad?
+
+#Tomando en consideracion que la productividad se mide por la operacion publicaciones / investigadores, podemos decir que Mexico es el pais con mayor productividad por cada investigador, sin embargo no se puede alcanzar que por lo menos la relacion sea 1 - 1, 1 publicacion por investigador.
+
+paises_productividad<- proyectoInovacion %>%
+  group_by(pais) %>%
+  summarize(total_investigadores=sum(investigadores), total_publicaciones = sum(publicaciones)) %>%
+  arrange(desc((total_investigadores / total_publicaciones))) 
 
 paises_productividad
 
 #paises con mayor productividad ordenas de mayor a menor
-#pais                  productividad
-#Colombia	            1.653330e-05			
-#Panama	              1.618713e-05			
-#Costa Rica	          1.366013e-05			
-#Mexico	              1.338068e-05			
-#Guatemala	          1.295534e-05			
-#Peru	                1.145801e-05			
-#Bolivia	            1.083629e-05			
-#Uruguay	            9.586294e-06			
-#Argentina	          9.466890e-06			
-#Chile	              8.663492e-06
-#Ecuador	            8.615763e-06			
-#Paraguay	            7.999389e-06	
+#pais        total_investigadores total_publicaciones
+#Mexico	      427		              147		
+#Paraguay	    374		              132		
+#Chile	      425		              156		
+#Guatemala	  532		              198		
+#Uruguay	    287		              112		
+#Panama	      541		              213		
+#Peru	        352		              139		
+#Colombia	    484		              207		
+#Costa Rica	  409	              	176		
+#Ecuador	    356	                154	
 
 
 #¿Se identifican proyectos atípicos?
