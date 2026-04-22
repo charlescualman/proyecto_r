@@ -261,7 +261,7 @@ for (pais in lista_paises) {
 ```
 #Parte VI - while
 ```{r}
-#Calcular métricas para el umbral
+#vamos a revisar proyectos sobresalientes
 media_eficiencia <- mean(proyectoInovacion$indice_resultados)
 desv_eficiencia <- sd(proyectoInovacion$indice_resultados)
 umbral_sobresaliente <- media_eficiencia + (2 * desv_eficiencia)
@@ -271,7 +271,6 @@ proyectos_sobresalientes <- c()
 i <- 1                          
 n <- nrow(proyectoInovacion)    
 
-#WHILE 
 while (i <= n) {
   
   # Extrae la eficiencia del proyecto actual
